@@ -54,7 +54,7 @@ document.addEventListener(
                     text-align:center;
                 ">
                 <img
-    src="Earnova img.jpeg"
+    src="earnova img.jpeg"
     alt="Earnova"
     style="
         width:70px;
