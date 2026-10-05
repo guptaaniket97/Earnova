@@ -8,19 +8,19 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-        const loginButton =
-            document.querySelector(".login-btn");
+        const loginButtons =
+    document.querySelectorAll(".login-btn");
 
 
-        if (loginButton) {
+loginButtons.forEach(function (button) {
 
-            loginButton.onclick = function () {
+    button.onclick = function () {
 
-                showRegisterLoginPopup("login");
+        showRegisterLoginPopup("login");
 
-            };
+    };
 
-        }
+});
 
 
         function showRegisterLoginPopup(type) {
