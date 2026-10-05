@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Earnova - Earnings</title>
+
+    <link rel="stylesheet"
+        href="earnings.css">
+
+</head>
+
+
+<body>
+
+
+<header class="earnings-header">
+
+    <div class="logo">
+    <img
+        src="Earnova img.jpeg"
+        alt="Earnova Logo"
+    >
+</div>
+
+
+    <nav>
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="offers.html">
+            Offers
+        </a>
+
+        <a href="my-links.html">
+            My Links
+        </a>
+
+        <a href="earnings.html">
+            Earnings
+        </a>
+
+        <a href="withdraw.html">
+            Withdraw
+        </a>
+
+        <a href="profile.html">
+            Profile
+        </a>
+
+    </nav>
+
+</header>
+
+
+
+<main class="earnings-main">
+
+    <h1>
+        My Earnings
+    </h1>
+
+
+    <p class="subtitle">
+        Track your commissions and earnings from Earnova.
+    </p>
+
+
+
+    <div class="earning-cards">
+
+
+        <div class="earning-card">
+
+            <h3>
+                Total Earnings
+            </h3>
+
+            <h2 id="totalEarnings">
+                ₹0.00
+            </h2>
+
+        </div>
+
+
+
+        <div class="earning-card">
+
+            <h3>
+                Available Balance
+            </h3>
+
+            <h2 id="availableBalance">
+                ₹0.00
+            </h2>
+
+        </div>
+
+
+
+        <div class="earning-card">
+
+            <h3>
+                Pending Earnings
+            </h3>
+
+            <h2 id="pendingEarnings">
+                ₹0.00
+            </h2>
+
+        </div>
+
+
+    </div>
+
+
+
+    <section class="recent-earnings">
+
+        <h2>
+            Recent Earnings
+        </h2>
+
+
+        <div class="earning-row">
+
+            <div>
+
+                <strong id="recentEarningTitle">
+                    No earnings yet
+                </strong>
+
+
+                <p id="recentEarningText">
+                    Start promoting offers to generate
+                    eligible commissions.
+                </p>
+
+            </div>
+
+
+            <span id="recentEarningAmount">
+                ₹0.00
+            </span>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+
+
+<script>
+
+async function loadEarnings() {
+
+    try {
+
+        /*
+        =================================
+        GET LOGGED-IN USER
+        =================================
+        */
+
+        const {
+            data: { user },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+
+        if (userError || !user) {
+
+            alert(
+                "Please login to view your earnings."
+            );
+
+            window.location.href =
+                "index.html";
+
+            return;
+        }
+
+
+
+        /*
+        =================================
+        GET EARNINGS FROM SUPABASE
+        =================================
+        */
+
+        const {
+            data: earnings,
+            error: earningsError
+        } = await supabaseClient
+
+            .from("earnings")
+
+            .select(
+                "id, created_at, offer_name, amount, click_id"
+            )
+
+            .eq(
+                "user_id",
+                user.id
+            )
+
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+        /*
+        =================================
+        ERROR CHECK
+        =================================
+        */
+
+        if (earningsError) {
+
+            console.error(
+                "Earnings error:",
+                earningsError
+            );
+
+            alert(
+                "Unable to load earnings.\n\n" +
+                earningsError.message
+            );
+
+            return;
+        }
+
+
+
+        /*
+        =================================
+        NO EARNINGS
+        =================================
+        */
+
+        if (
+            !earnings ||
+            earnings.length === 0
+        ) {
+
+            document.getElementById(
+                "totalEarnings"
+            ).textContent =
+                "₹0.00";
+
+
+            document.getElementById(
+                "availableBalance"
+            ).textContent =
+                "₹0.00";
+
+
+            document.getElementById(
+                "pendingEarnings"
+            ).textContent =
+                "₹0.00";
+
+
+            document.getElementById(
+                "recentEarningTitle"
+            ).textContent =
+                "No earnings yet";
+
+
+            document.getElementById(
+                "recentEarningText"
+            ).textContent =
+                "Start promoting offers to generate eligible commissions.";
+
+
+            document.getElementById(
+                "recentEarningAmount"
+            ).textContent =
+                "₹0.00";
+
+
+            return;
+        }
+
+
+
+        /*
+        =================================
+        CALCULATE TOTAL
+        =================================
+        */
+
+        const totalEarnings =
+            earnings.reduce(
+
+                function (
+                    total,
+                    earning
+                ) {
+
+                    return (
+                        total +
+                        Number(
+                            earning.amount
+                        )
+                    );
+
+                },
+
+                0
+
+            );
+
+
+
+        /*
+        =================================
+        AVAILABLE BALANCE
+        =================================
+        */
+
+        const availableBalance =
+            totalEarnings;
+
+
+
+        /*
+        =================================
+        PENDING
+        =================================
+        */
+
+        const pendingEarnings = 0;
+
+
+
+        /*
+        =================================
+        SHOW TOTAL
+        =================================
+        */
+
+        document.getElementById(
+            "totalEarnings"
+        ).textContent =
+
+            "₹" +
+            totalEarnings.toFixed(2);
+
+
+
+        /*
+        =================================
+        SHOW AVAILABLE
+        =================================
+        */
+
+        document.getElementById(
+            "availableBalance"
+        ).textContent =
+
+            "₹" +
+            availableBalance.toFixed(2);
+
+
+
+        /*
+        =================================
+        SHOW PENDING
+        =================================
+        */
+
+        document.getElementById(
+            "pendingEarnings"
+        ).textContent =
+
+            "₹" +
+            pendingEarnings.toFixed(2);
+
+
+
+        /*
+        =================================
+        LATEST EARNING
+        =================================
+        */
+
+        const latest =
+            earnings[0];
+
+
+        document.getElementById(
+            "recentEarningTitle"
+        ).textContent =
+
+            latest.offer_name ||
+            "Offer promotion earning";
+
+
+        document.getElementById(
+            "recentEarningText"
+        ).textContent =
+
+            "Commission earned from this offer.";
+
+
+        document.getElementById(
+            "recentEarningAmount"
+        ).textContent =
+
+            "₹" +
+            Number(
+                latest.amount
+            ).toFixed(2);
+
+
+
+        /*
+        =================================
+        CONSOLE
+        =================================
+        */
+
+        console.log(
+            "Earnova earnings loaded:",
+            earnings
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Unexpected error:",
+            error
+        );
+
+        alert(
+            "Something went wrong while loading earnings."
+        );
+
+    }
+
+}
+
+
+
+/*
+=================================
+START
+=================================
+*/
+
+loadEarnings();
+
+</script>
+
+
+</body>
+
+</html>

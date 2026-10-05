@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Earnova - Profile</title>
+
+    <link rel="stylesheet"
+        href="profile.css">
+
+</head>
+
+
+<body>
+
+
+<header class="profile-header">
+
+    <div class="logo">
+
+        <img
+            src="Earnova img.jpeg"
+            alt="Earnova Logo"
+        >
+
+    </div>
+
+
+    <nav>
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="offers.html">
+            Offers
+        </a>
+
+        <a href="my-links.html">
+            My Links
+        </a>
+
+        <a href="earnings.html">
+            Earnings
+        </a>
+
+        <a href="withdraw.html">
+            Withdraw
+        </a>
+
+        <a href="profile.html">
+            Profile
+        </a>
+
+    </nav>
+
+</header>
+
+
+
+<main class="profile-main">
+
+
+    <h1>
+        My Profile
+    </h1>
+
+
+    <p class="subtitle">
+        Manage your Earnova account information.
+    </p>
+
+
+
+    <section class="profile-card">
+
+
+        <!-- PROFILE AVATAR -->
+
+        <div class="profile-avatar">
+
+            <img
+                src="Earnova img.jpeg"
+                alt="Earnova"
+            >
+
+        </div>
+
+
+
+        <h2 id="profileName">
+            Loading...
+        </h2>
+
+
+        <p
+            class="profile-email"
+            id="profileEmail">
+
+            Loading...
+
+        </p>
+
+
+
+        <!-- ACCOUNT INFORMATION -->
+
+        <div class="profile-info">
+
+
+            <div class="info-box">
+
+                <span>
+                    Full Name
+                </span>
+
+                <strong id="infoName">
+                    -
+                </strong>
+
+            </div>
+
+
+
+            <div class="info-box">
+
+                <span>
+                    Email Address
+                </span>
+
+                <strong id="infoEmail">
+                    -
+                </strong>
+
+            </div>
+
+
+
+            <div class="info-box">
+
+                <span>
+                    Referral ID
+                </span>
+
+                <strong id="referralId">
+                    -
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- REFERRAL LINK -->
+
+        <div class="referral-section">
+
+            <h3>
+                Your Referral Link
+            </h3>
+
+
+            <p>
+                Share this link with others to promote
+                Earnova offers.
+            </p>
+
+
+            <div class="referral-box">
+
+                <input
+                    type="text"
+                    id="referralLink"
+                    readonly
+                    value=""
+                >
+
+
+                <button id="copyReferral">
+                    Copy Link
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- LOGOUT -->
+
+        <button
+            id="logoutBtn"
+            class="logout-btn">
+
+            Logout
+
+        </button>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+
+
+<script>
+
+async function loadProfile() {
+
+    try {
+
+        /*
+        ========================================
+        GET LOGGED-IN USER
+        ========================================
+        */
+
+        const {
+            data: { user },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+
+        if (userError || !user) {
+
+            alert(
+                "Please login to view your profile."
+            );
+
+            window.location.href =
+                "index.html";
+
+            return;
+
+        }
+
+
+
+        /*
+        ========================================
+        GET USER PROFILE
+        ========================================
+        */
+
+        const {
+            data: dbUser,
+            error: dbError
+        } = await supabaseClient
+
+            .from("users")
+
+            .select(
+                "name, email, referral_id"
+            )
+
+            .eq(
+                "auth_id",
+                user.id
+            )
+
+            .maybeSingle();
+
+
+
+        if (dbError) {
+
+            console.error(
+                "Profile error:",
+                dbError
+            );
+
+        }
+
+
+
+        /*
+        ========================================
+        USER NAME
+        ========================================
+        */
+
+        const name =
+            dbUser?.name ||
+            user.user_metadata?.name ||
+            "Earnova User";
+
+
+        /*
+        ========================================
+        USER EMAIL
+        ========================================
+        */
+
+        const email =
+            dbUser?.email ||
+            user.email ||
+            "-";
+
+
+        /*
+        ========================================
+        REFERRAL ID
+        ========================================
+        */
+
+        const referralId =
+            dbUser?.referral_id ||
+            (
+                "EV" +
+                user.id
+                    .replace(/-/g, "")
+                    .substring(0, 10)
+                    .toUpperCase()
+            );
+
+
+
+        /*
+        ========================================
+        REFERRAL LINK
+        ========================================
+        */
+
+        const referralLink =
+            "https://earnova-demo.com/offer/1?ref=" +
+            referralId;
+
+
+
+        /*
+        ========================================
+        SHOW PROFILE
+        ========================================
+        */
+
+        document.getElementById(
+            "profileName"
+        ).textContent = name;
+
+
+        document.getElementById(
+            "profileEmail"
+        ).textContent = email;
+
+
+        document.getElementById(
+            "infoName"
+        ).textContent = name;
+
+
+        document.getElementById(
+            "infoEmail"
+        ).textContent = email;
+
+
+        document.getElementById(
+            "referralId"
+        ).textContent = referralId;
+
+
+        document.getElementById(
+            "referralLink"
+        ).value = referralLink;
+
+
+
+        /*
+        ========================================
+        SAVE LOGIN USER
+        ========================================
+        */
+
+        localStorage.setItem(
+            "earnovaLoggedInUser",
+            JSON.stringify({
+
+                id: user.id,
+
+                name: name,
+
+                email: email,
+
+                referralId: referralId
+
+            })
+        );
+
+
+
+        console.log(
+            "Earnova profile loaded:",
+            {
+                name,
+                email,
+                referralId
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Profile loading error:",
+            error
+        );
+
+        alert(
+            "Something went wrong while loading your profile."
+        );
+
+    }
+
+}
+
+
+
+/*
+========================================
+COPY REFERRAL LINK
+========================================
+*/
+
+document.getElementById(
+    "copyReferral"
+).onclick = async function () {
+
+
+    const input =
+        document.getElementById(
+            "referralLink"
+        );
+
+
+    try {
+
+        await navigator.clipboard.writeText(
+            input.value
+        );
+
+
+        alert(
+            "Referral link copied!"
+        );
+
+    }
+
+    catch (error) {
+
+        input.select();
+
+        document.execCommand("copy");
+
+        alert(
+            "Referral link copied!"
+        );
+
+    }
+
+};
+
+
+
+/*
+========================================
+LOGOUT
+========================================
+*/
+
+document.getElementById(
+    "logoutBtn"
+).onclick = async function () {
+
+
+    const {
+        error
+    } = await supabaseClient.auth.signOut();
+
+
+    if (error) {
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+        alert(
+            "Unable to logout."
+        );
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        "earnovaLoggedInUser"
+    );
+
+
+    window.location.href =
+        "index.html";
+
+};
+
+
+
+/*
+========================================
+START
+========================================
+*/
+
+loadProfile();
+
+</script>
+
+
+</body>
+
+</html><!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Earnova - Profile</title>
+
+    <link rel="stylesheet"
+        href="profile.css">
+
+</head>
+
+
+<body>
+
+
+<header class="profile-header">
+
+    <div class="logo">
+
+        <img
+            src="Earnova img.jpeg"
+            alt="Earnova Logo"
+        >
+
+    </div>
+
+
+    <nav>
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="offers.html">
+            Offers
+        </a>
+
+        <a href="my-links.html">
+            My Links
+        </a>
+
+        <a href="earnings.html">
+            Earnings
+        </a>
+
+        <a href="withdraw.html">
+            Withdraw
+        </a>
+
+        <a href="profile.html">
+            Profile
+        </a>
+
+    </nav>
+
+</header>
+
+
+
+<main class="profile-main">
+
+
+    <h1>
+        My Profile
+    </h1>
+
+
+    <p class="subtitle">
+        Manage your Earnova account information.
+    </p>
+
+
+
+    <section class="profile-card">
+
+
+        <!-- PROFILE AVATAR -->
+
+        <div class="profile-avatar">
+
+            <img
+                src="Earnova img.jpeg"
+                alt="Earnova"
+            >
+
+        </div>
+
+
+
+        <h2 id="profileName">
+            Loading...
+        </h2>
+
+
+        <p
+            class="profile-email"
+            id="profileEmail">
+
+            Loading...
+
+        </p>
+
+
+
+        <!-- ACCOUNT INFORMATION -->
+
+        <div class="profile-info">
+
+
+            <div class="info-box">
+
+                <span>
+                    Full Name
+                </span>
+
+                <strong id="infoName">
+                    -
+                </strong>
+
+            </div>
+
+
+
+            <div class="info-box">
+
+                <span>
+                    Email Address
+                </span>
+
+                <strong id="infoEmail">
+                    -
+                </strong>
+
+            </div>
+
+
+
+            <div class="info-box">
+
+                <span>
+                    Referral ID
+                </span>
+
+                <strong id="referralId">
+                    -
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- REFERRAL LINK -->
+
+        <div class="referral-section">
+
+            <h3>
+                Your Referral Link
+            </h3>
+
+
+            <p>
+                Share this link with others to promote
+                Earnova offers.
+            </p>
+
+
+            <div class="referral-box">
+
+                <input
+                    type="text"
+                    id="referralLink"
+                    readonly
+                    value=""
+                >
+
+
+                <button id="copyReferral">
+                    Copy Link
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- LOGOUT -->
+
+        <button
+            id="logoutBtn"
+            class="logout-btn">
+
+            Logout
+
+        </button>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+
+
+<script>
+
+async function loadProfile() {
+
+    try {
+
+        /*
+        ========================================
+        GET LOGGED-IN USER
+        ========================================
+        */
+
+        const {
+            data: { user },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+
+        if (userError || !user) {
+
+            alert(
+                "Please login to view your profile."
+            );
+
+            window.location.href =
+                "index.html";
+
+            return;
+
+        }
+
+
+
+        /*
+        ========================================
+        GET USER PROFILE
+        ========================================
+        */
+
+        const {
+            data: dbUser,
+            error: dbError
+        } = await supabaseClient
+
+            .from("users")
+
+            .select(
+                "name, email, referral_id"
+            )
+
+            .eq(
+                "auth_id",
+                user.id
+            )
+
+            .maybeSingle();
+
+
+
+        if (dbError) {
+
+            console.error(
+                "Profile error:",
+                dbError
+            );
+
+        }
+
+
+
+        /*
+        ========================================
+        USER NAME
+        ========================================
+        */
+
+        const name =
+            dbUser?.name ||
+            user.user_metadata?.name ||
+            "Earnova User";
+
+
+        /*
+        ========================================
+        USER EMAIL
+        ========================================
+        */
+
+        const email =
+            dbUser?.email ||
+            user.email ||
+            "-";
+
+
+        /*
+        ========================================
+        REFERRAL ID
+        ========================================
+        */
+
+        const referralId =
+            dbUser?.referral_id ||
+            (
+                "EV" +
+                user.id
+                    .replace(/-/g, "")
+                    .substring(0, 10)
+                    .toUpperCase()
+            );
+
+
+
+        /*
+        ========================================
+        REFERRAL LINK
+        ========================================
+        */
+
+        const referralLink =
+            "https://earnova-demo.com/offer/1?ref=" +
+            referralId;
+
+
+
+        /*
+        ========================================
+        SHOW PROFILE
+        ========================================
+        */
+
+        document.getElementById(
+            "profileName"
+        ).textContent = name;
+
+
+        document.getElementById(
+            "profileEmail"
+        ).textContent = email;
+
+
+        document.getElementById(
+            "infoName"
+        ).textContent = name;
+
+
+        document.getElementById(
+            "infoEmail"
+        ).textContent = email;
+
+
+        document.getElementById(
+            "referralId"
+        ).textContent = referralId;
+
+
+        document.getElementById(
+            "referralLink"
+        ).value = referralLink;
+
+
+
+        /*
+        ========================================
+        SAVE LOGIN USER
+        ========================================
+        */
+
+        localStorage.setItem(
+            "earnovaLoggedInUser",
+            JSON.stringify({
+
+                id: user.id,
+
+                name: name,
+
+                email: email,
+
+                referralId: referralId
+
+            })
+        );
+
+
+
+        console.log(
+            "Earnova profile loaded:",
+            {
+                name,
+                email,
+                referralId
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Profile loading error:",
+            error
+        );
+
+        alert(
+            "Something went wrong while loading your profile."
+        );
+
+    }
+
+}
+
+
+
+/*
+========================================
+COPY REFERRAL LINK
+========================================
+*/
+
+document.getElementById(
+    "copyReferral"
+).onclick = async function () {
+
+
+    const input =
+        document.getElementById(
+            "referralLink"
+        );
+
+
+    try {
+
+        await navigator.clipboard.writeText(
+            input.value
+        );
+
+
+        alert(
+            "Referral link copied!"
+        );
+
+    }
+
+    catch (error) {
+
+        input.select();
+
+        document.execCommand("copy");
+
+        alert(
+            "Referral link copied!"
+        );
+
+    }
+
+};
+
+
+
+/*
+========================================
+LOGOUT
+========================================
+*/
+
+document.getElementById(
+    "logoutBtn"
+).onclick = async function () {
+
+
+    const {
+        error
+    } = await supabaseClient.auth.signOut();
+
+
+    if (error) {
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+        alert(
+            "Unable to logout."
+        );
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        "earnovaLoggedInUser"
+    );
+
+
+    window.location.href =
+        "index.html";
+
+};
+
+
+
+/*
+========================================
+START
+========================================
+*/
+
+loadProfile();
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,401 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: #172033;
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(37, 99, 235, 0.10),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(14, 165, 233, 0.10),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #f8faff 0%,
+            #eef4ff 50%,
+            #f8fafc 100%
+        );
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.links-header {
+    min-height: 76px;
+    padding: 0 6%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a,
+            #172554,
+            #1d4ed8
+        );
+
+    border-bottom: 1px solid
+        rgba(255, 255, 255, 0.12);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    box-shadow:
+        0 5px 20px
+        rgba(15, 23, 42, 0.18);
+}
+
+
+/* =========================
+   LOGO
+========================= */
+
+.links-header .logo {
+    width: 52px;
+    height: 52px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(255, 255, 255, 0.15),
+
+        0 5px 18px
+        rgba(0, 0, 0, 0.25);
+}
+
+.links-header .logo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+.links-header nav {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.links-header nav a {
+    text-decoration: none;
+
+    color: #e5e7eb;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.links-header nav a:hover {
+    color: white;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.links-main {
+    max-width: 1100px;
+
+    margin: auto;
+
+    padding: 60px 30px 80px;
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+.links-main h1 {
+    text-align: center;
+
+    font-size: 40px;
+
+    margin-bottom: 12px;
+
+    color: #172033;
+}
+
+.subtitle {
+    text-align: center;
+
+    color: #687080;
+
+    font-size: 16px;
+
+    line-height: 1.6;
+
+    margin-bottom: 45px;
+}
+
+
+/* =========================
+   LINK CARD
+========================= */
+
+.link-card {
+    background:
+        rgba(255, 255, 255, 0.92);
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.85);
+
+    border-radius: 18px;
+
+    padding: 25px 28px;
+
+    margin-bottom: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 25px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(30, 64, 175, 0.08);
+
+    backdrop-filter: blur(10px);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.link-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 16px 35px
+        rgba(30, 64, 175, 0.13);
+}
+
+
+/* =========================
+   CARD TITLE
+========================= */
+
+.link-card h2 {
+    font-size: 21px;
+
+    margin-bottom: 12px;
+
+    color: #172033;
+}
+
+
+/* =========================
+   AFFILIATE LINK
+========================= */
+
+.affiliate-link {
+    max-width: 650px;
+
+    padding: 11px 14px;
+
+    background: #f1f5f9;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 8px;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    word-break: break-all;
+
+    margin-bottom: 12px;
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+.stats {
+    color: #687080;
+
+    font-size: 14px;
+}
+
+.stats strong {
+    color: #2563eb;
+
+    font-size: 16px;
+
+    margin-left: 4px;
+}
+
+
+/* =========================
+   COPY BUTTON
+========================= */
+
+.link-card button {
+    min-width: 125px;
+
+    padding: 13px 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #172033,
+            #1e3a8a
+        );
+
+    color: white;
+
+    border: none;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: 0.2s ease;
+
+    box-shadow:
+        0 6px 15px
+        rgba(23, 32, 51, 0.15);
+}
+
+.link-card button:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(37, 99, 235, 0.25);
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
+
+    .links-header {
+        padding: 0 30px;
+    }
+
+    .links-header nav {
+        gap: 14px;
+    }
+
+    .link-card {
+        align-items: flex-start;
+    }
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+    .links-header {
+        min-height: 70px;
+
+        padding: 12px 20px;
+
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+    .links-header nav {
+        flex-wrap: wrap;
+
+        justify-content: center;
+
+        gap: 10px 16px;
+    }
+
+    .links-header nav a {
+        font-size: 12px;
+    }
+
+    .links-main {
+        padding: 40px 18px 60px;
+    }
+
+    .links-main h1 {
+        font-size: 30px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+
+        margin-bottom: 30px;
+    }
+
+    .link-card {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        padding: 23px 20px;
+
+        gap: 18px;
+    }
+
+    .link-card h2 {
+        font-size: 19px;
+    }
+
+    .affiliate-link {
+        font-size: 12px;
+    }
+
+    .link-card button {
+        width: 100%;
+    }
+}

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Earnova - Withdraw</title>
+
+    <link rel="stylesheet"
+        href="withdraw.css">
+
+</head>
+
+
+<body>
+
+
+<header class="withdraw-header">
+
+    <div class="logo">
+    <img
+        src="Earnova img.jpeg"
+        alt="Earnova Logo"
+    >
+</div>
+
+
+    <nav>
+
+        <a href="dashboard.html">Dashboard</a>
+
+        <a href="offers.html">Offers</a>
+
+        <a href="my-links.html">My Links</a>
+
+        <a href="earnings.html">Earnings</a>
+
+        <a href="withdraw.html">Withdraw</a>
+
+        <a href="profile.html">Profile</a>
+
+    </nav>
+
+</header>
+
+
+
+<main class="withdraw-main">
+
+    <h1>
+        Withdraw Earnings
+    </h1>
+
+
+    <p class="subtitle">
+        Request a withdrawal from your available Earnova balance.
+    </p>
+
+
+
+    <div class="balance-card">
+
+        <p>
+            Available Balance
+        </p>
+
+
+        <h2 id="withdrawBalance">
+            ₹0.00
+        </h2>
+
+
+        <small>
+            Minimum withdrawal: ₹100
+        </small>
+
+    </div>
+
+
+
+    <div class="withdraw-box">
+
+        <h2>
+            Withdrawal Request
+        </h2>
+
+
+        <label>
+            Withdrawal Amount
+        </label>
+
+
+        <input
+            type="number"
+            id="amount"
+            placeholder="Enter amount"
+            min="100"
+        >
+
+
+        <label>
+            Payment Method
+        </label>
+
+
+        <select id="paymentMethod">
+
+            <option value="">
+                Select Payment Method
+            </option>
+
+            <option value="UPI">
+                UPI
+            </option>
+
+            <option value="Bank Transfer">
+                Bank Transfer
+            </option>
+
+        </select>
+
+
+        <label>
+            UPI ID / Bank Details
+        </label>
+
+
+        <input
+            type="text"
+            id="paymentDetails"
+            placeholder="Enter payment details"
+        >
+
+
+        <button id="withdrawBtn">
+            Request Withdrawal
+        </button>
+
+
+        <p class="note">
+            Withdrawal requests are subject to verification and approval.
+        </p>
+
+    </div>
+
+
+
+    <div class="history">
+
+        <h2>
+            Withdrawal History
+        </h2>
+
+
+        <div class="history-row">
+
+            <div>
+
+                <strong id="withdrawalStatus">
+                    No withdrawal requests
+                </strong>
+
+
+                <p id="withdrawalMessage">
+                    Your withdrawal history will appear here.
+                </p>
+
+            </div>
+
+
+            <span id="withdrawalAmount">
+                ₹0.00
+            </span>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+
+<script>
+
+let currentUser = null;
+
+let currentBalance = 0;
+
+
+/*
+========================================
+LOAD PAGE
+========================================
+*/
+
+async function loadWithdrawPage() {
+
+    const {
+        data: { user },
+        error
+    } = await supabaseClient.auth.getUser();
+
+
+    if (error || !user) {
+
+        alert(
+            "Please login to withdraw your earnings."
+        );
+
+        window.location.href =
+            "index.html";
+
+        return;
+
+    }
+
+
+    currentUser = user;
+
+
+    /*
+    ========================================
+    GET REAL EARNINGS
+    ========================================
+    */
+
+    const {
+        data: earnings,
+        error: earningsError
+    } = await supabaseClient
+
+        .from("earnings")
+
+        .select("amount")
+
+        .eq(
+            "user_id",
+            user.id
+        );
+
+
+    if (earningsError) {
+
+        console.error(
+            "Earnings error:",
+            earningsError
+        );
+
+        alert(
+            "Unable to load your balance.\n\n" +
+            earningsError.message
+        );
+
+        return;
+
+    }
+
+
+    /*
+    ========================================
+    CALCULATE BALANCE
+    ========================================
+    */
+
+    currentBalance =
+        (earnings || []).reduce(
+
+            function (
+                total,
+                earning
+            ) {
+
+                return (
+                    total +
+                    Number(
+                        earning.amount
+                    )
+                );
+
+            },
+
+            0
+
+        );
+
+
+    document.getElementById(
+        "withdrawBalance"
+    ).textContent =
+
+        "₹" +
+        currentBalance.toFixed(2);
+
+
+    /*
+    ========================================
+    LOAD WITHDRAWAL HISTORY
+    ========================================
+    */
+
+    await loadWithdrawalHistory(
+        user.id
+    );
+
+}
+
+
+
+/*
+========================================
+SUBMIT WITHDRAWAL
+========================================
+*/
+
+document.getElementById(
+    "withdrawBtn"
+).onclick = async function () {
+
+
+    if (!currentUser) {
+
+        alert(
+            "Please wait while your account is loading."
+        );
+
+        return;
+
+    }
+
+
+    const amount =
+        Number(
+            document.getElementById(
+                "amount"
+            ).value
+        );
+
+
+    const method =
+        document.getElementById(
+            "paymentMethod"
+        ).value;
+
+
+    const details =
+        document.getElementById(
+            "paymentDetails"
+        ).value.trim();
+
+
+
+    /*
+    ========================================
+    VALIDATION
+    ========================================
+    */
+
+    if (
+        !amount ||
+        !method ||
+        !details
+    ) {
+
+        alert(
+            "Please fill all withdrawal details."
+        );
+
+        return;
+
+    }
+
+
+    if (amount < 100) {
+
+        alert(
+            "Minimum withdrawal amount is ₹100."
+        );
+
+        return;
+
+    }
+
+
+    if (amount > currentBalance) {
+
+        alert(
+            "Insufficient balance."
+        );
+
+        return;
+
+    }
+
+
+
+    /*
+    ========================================
+    CHECK PENDING REQUEST
+    ========================================
+    */
+
+    const {
+        data: pendingRequests,
+        error: pendingError
+    } = await supabaseClient
+
+        .from("withdrawals")
+
+        .select("id")
+
+        .eq(
+            "user_id",
+            currentUser.id
+        )
+
+        .eq(
+            "status",
+            "Pending"
+        );
+
+
+    if (pendingError) {
+
+        alert(
+            "Unable to check withdrawal status.\n\n" +
+            pendingError.message
+        );
+
+        return;
+
+    }
+
+
+    if (
+        pendingRequests &&
+        pendingRequests.length > 0
+    ) {
+
+        alert(
+            "You already have a pending withdrawal request."
+        );
+
+        return;
+
+    }
+
+
+
+    /*
+    ========================================
+    CREATE WITHDRAWAL
+    ========================================
+    */
+
+    const {
+        error: withdrawalError
+    } = await supabaseClient
+
+        .from("withdrawals")
+
+        .insert({
+
+            user_id:
+                currentUser.id,
+
+            amount:
+                amount,
+
+            method:
+                method,
+
+            payment_details:
+                details,
+
+            status:
+                "Pending"
+
+        });
+
+
+
+    /*
+    ========================================
+    ERROR
+    ========================================
+    */
+
+    if (withdrawalError) {
+
+        console.error(
+            "Withdrawal error:",
+            withdrawalError
+        );
+
+        alert(
+            "Withdrawal request failed.\n\n" +
+            withdrawalError.message
+        );
+
+        return;
+
+    }
+
+
+
+    /*
+    ========================================
+    SUCCESS
+    ========================================
+    */
+
+    alert(
+        "Withdrawal request submitted successfully!"
+    );
+
+
+    /*
+    CLEAR FORM
+    */
+
+    document.getElementById(
+        "amount"
+    ).value = "";
+
+
+    document.getElementById(
+        "paymentMethod"
+    ).value = "";
+
+
+    document.getElementById(
+        "paymentDetails"
+    ).value = "";
+
+
+    /*
+    REFRESH HISTORY
+    */
+
+    await loadWithdrawalHistory(
+        currentUser.id
+    );
+
+};
+
+
+
+/*
+========================================
+LOAD WITHDRAWAL HISTORY
+========================================
+*/
+
+async function loadWithdrawalHistory(
+    userId
+) {
+
+
+    const {
+        data: requests,
+        error
+    } = await supabaseClient
+
+        .from("withdrawals")
+
+        .select(
+            "id, created_at, amount, method, status, admin_note"
+        )
+
+        .eq(
+            "user_id",
+            userId
+        )
+
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "Withdrawal history error:",
+            error
+        );
+
+        return;
+
+    }
+
+
+    /*
+    ========================================
+    NO REQUEST
+    ========================================
+    */
+
+    if (
+        !requests ||
+        requests.length === 0
+    ) {
+
+        document.getElementById(
+            "withdrawalStatus"
+        ).textContent =
+            "No withdrawal requests";
+
+
+        document.getElementById(
+            "withdrawalMessage"
+        ).textContent =
+            "Your withdrawal history will appear here.";
+
+
+        document.getElementById(
+            "withdrawalAmount"
+        ).textContent =
+            "₹0.00";
+
+
+        return;
+
+    }
+
+
+
+    /*
+    ========================================
+    LATEST REQUEST
+    ========================================
+    */
+
+    const latest =
+        requests[0];
+
+
+    document.getElementById(
+        "withdrawalStatus"
+    ).textContent =
+
+        "Withdrawal: " +
+        latest.status;
+
+
+    document.getElementById(
+        "withdrawalMessage"
+    ).textContent =
+
+        "Payment Method: " +
+        latest.method;
+
+
+    document.getElementById(
+        "withdrawalAmount"
+    ).textContent =
+
+        "₹" +
+        Number(
+            latest.amount
+        ).toFixed(2);
+
+}
+
+
+
+/*
+========================================
+START
+========================================
+*/
+
+loadWithdrawPage();
+
+</script>
+
+
+</body>
+
+</html>

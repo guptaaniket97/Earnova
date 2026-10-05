@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Earnova Dashboard</title>
+
+    <link rel="stylesheet"
+        href="dashboard.css">
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="dashboard-logo">
+    <img
+        src="Earnova img.jpeg"
+        alt="Earnova Logo"
+    >
+</div>
+
+        <p onclick="window.location.href='dashboard.html'">
+            Dashboard
+        </p>
+
+        <p onclick="window.location.href='offers.html'">
+            Offers
+        </p>
+
+        <p onclick="window.location.href='my-links.html'">
+            My Links
+        </p>
+
+        <p onclick="window.location.href='earnings.html'">
+            Earnings
+        </p>
+
+        <p onclick="window.location.href='withdraw.html'">
+            Withdraw
+        </p>
+
+        <p onclick="window.location.href='profile.html'">
+            Profile
+        </p>
+
+        <p onclick="logout()">
+            Logout
+        </p>
+
+    </aside>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+
+        <h1 id="welcomeUser">
+            Welcome 👋
+        </h1>
+
+
+        <p class="subtitle">
+            Manage your affiliate activities from here.
+        </p>
+
+
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+
+            <div class="card">
+
+                <h3>
+                    Earnings
+                </h3>
+
+                <h2 id="dashboardEarnings">
+                    ₹0.00
+                </h2>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <h3>
+                    Total Clicks
+                </h3>
+
+                <h2 id="dashboardClicks">
+                    0
+                </h2>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <h3>
+                    Conversions
+                </h3>
+
+                <h2>
+                    0
+                </h2>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <h3>
+                    Pending
+                </h3>
+
+                <h2 id="dashboardPending">
+                    ₹0.00
+                </h2>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- WELCOME BOX -->
+
+        <div class="welcome-box">
+
+            <h2>
+                Start Earning with Earnova
+            </h2>
+
+            <p>
+                Explore available offers, generate your affiliate links
+                and start promoting products.
+            </p>
+
+            <button
+                onclick="window.location.href='offers.html'">
+
+                Explore Offers
+
+            </button>
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+
+
+<script>
+
+
+/*
+========================================
+LOAD DASHBOARD
+========================================
+*/
+
+async function loadDashboard() {
+
+
+    /*
+    GET LOGGED-IN USER
+    */
+
+    const {
+        data: { user },
+        error
+    } = await supabaseClient.auth.getUser();
+
+
+    if (error || !user) {
+
+        window.location.href =
+            "index.html";
+
+        return;
+
+    }
+
+
+
+    /*
+    USER NAME
+    */
+
+    const userName =
+        user.user_metadata?.name ||
+        user.email ||
+        "User";
+
+
+    document.getElementById(
+        "welcomeUser"
+    ).textContent =
+        "Welcome, " +
+        userName +
+        " 👋";
+
+
+
+    /*
+    ========================================
+    GET REAL EARNINGS FROM SUPABASE
+    ========================================
+    */
+
+    const {
+        data: earnings,
+        error: earningsError
+    } = await supabaseClient
+
+        .from("earnings")
+
+        .select("amount")
+
+        .eq(
+            "user_id",
+            user.id
+        );
+
+
+    if (earningsError) {
+
+        console.error(
+            "Dashboard earnings error:",
+            earningsError
+        );
+
+        return;
+
+    }
+
+
+
+    /*
+    ========================================
+    CALCULATE TOTAL EARNINGS
+    ========================================
+    */
+
+    const totalEarnings =
+        (earnings || []).reduce(
+
+            function (
+                total,
+                earning
+            ) {
+
+                return (
+                    total +
+                    Number(
+                        earning.amount
+                    )
+                );
+
+            },
+
+            0
+
+        );
+
+
+
+    /*
+    ========================================
+    SHOW REAL EARNINGS
+    ========================================
+    */
+
+    document.getElementById(
+        "dashboardEarnings"
+    ).textContent =
+
+        "₹" +
+        totalEarnings.toFixed(2);
+
+
+
+    /*
+    ========================================
+    GET CLICKS FROM LOCAL DATA
+    ========================================
+    */
+
+    const userStats =
+        JSON.parse(
+
+            localStorage.getItem(
+                "earnovaUserStats_" +
+                user.id
+            )
+
+        ) || {
+
+            fashionClicks: 0,
+
+            techClicks: 0,
+
+            courseClicks: 0
+
+        };
+
+
+    const fashionClicks =
+        Number(
+            userStats.fashionClicks
+        ) || 0;
+
+
+    const techClicks =
+        Number(
+            userStats.techClicks
+        ) || 0;
+
+
+    const courseClicks =
+        Number(
+            userStats.courseClicks
+        ) || 0;
+
+
+    const totalClicks =
+        fashionClicks +
+        techClicks +
+        courseClicks;
+
+
+
+    /*
+    SHOW CLICKS
+    */
+
+    document.getElementById(
+        "dashboardClicks"
+    ).textContent =
+        totalClicks;
+
+
+
+    /*
+    PENDING
+    */
+
+    document.getElementById(
+        "dashboardPending"
+    ).textContent =
+        "₹0.00";
+
+
+}
+
+
+
+/*
+========================================
+LOGOUT
+========================================
+*/
+
+async function logout() {
+
+
+    const confirmLogout =
+        confirm(
+            "Are you sure you want to logout?"
+        );
+
+
+    if (!confirmLogout) {
+
+        return;
+
+    }
+
+
+    await supabaseClient.auth.signOut();
+
+
+    localStorage.removeItem(
+        "earnovaLoggedInUser"
+    );
+
+
+    alert(
+        "You have been logged out."
+    );
+
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+
+/*
+========================================
+START
+========================================
+*/
+
+loadDashboard();
+
+</script>
+
+
+</body>
+
+</html>

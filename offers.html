@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Earnova - Offers</title>
+
+    <link rel="stylesheet"
+        href="offers.css">
+
+</head>
+
+<body>
+
+
+<header class="offers-header">
+
+    <div class="logo">
+        Earnova
+    </div>
+
+    <nav>
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="offers.html">
+            Offers
+        </a>
+
+        <a href="my-links.html">
+            My Links
+        </a>
+
+        <a href="earnings.html">
+            Earnings
+        </a>
+
+        <a href="withdraw.html">
+            Withdraw
+        </a>
+
+        <a href="profile.html">
+            Profile
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main class="offers-main">
+
+    <h1>
+        Available Offers
+    </h1>
+
+    <p class="subtitle">
+        Choose an offer, promote it and
+        earn eligible commissions.
+    </p>
+
+
+    <div class="offers-container">
+
+
+        <div class="offer-card">
+
+            <div class="offer-icon">
+                🛍️
+            </div>
+
+            <h2>
+                Fashion Store
+            </h2>
+
+            <p id="fashionDescription">
+
+                Promote fashion products
+                and earn commission on
+                eligible purchases.
+
+            </p>
+
+            <div class="commission">
+
+                Commission:
+
+                <strong id="fashionCommission">
+                    10%
+                </strong>
+
+            </div>
+
+            <button>
+                Get Link
+            </button>
+
+        </div>
+
+
+
+        <div class="offer-card">
+
+            <div class="offer-icon">
+                📱
+            </div>
+
+            <h2>
+                Tech Products
+            </h2>
+
+            <p>
+
+                Share technology products
+                with your audience and earn
+                eligible commissions.
+
+            </p>
+
+            <div class="commission">
+
+                Commission:
+
+                <strong id="techCommission">
+                    8%
+                </strong>
+
+            </div>
+
+            <button>
+                Get Link
+            </button>
+
+        </div>
+
+
+
+        <div class="offer-card">
+
+            <div class="offer-icon">
+                📚
+            </div>
+
+            <h2>
+                Online Courses
+            </h2>
+
+            <p>
+
+                Promote useful courses and
+                earn commission from
+                eligible sales.
+
+            </p>
+
+            <div class="commission">
+
+                Commission:
+
+                <strong id="courseCommission">
+                    15%
+                </strong>
+
+            </div>
+
+            <button>
+                Get Link
+            </button>
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+
+<script>
+
+
+/* ================================
+   GET CURRENT USER
+================================ */
+
+async function getCurrentUser() {
+
+    const {
+        data,
+        error
+    } = await supabaseClient.auth.getUser();
+
+
+    if (error || !data.user) {
+
+        alert(
+            "Please login to use Earnova offers."
+        );
+
+        window.location.href =
+            "index.html";
+
+        return null;
+
+    }
+
+
+    return data.user;
+
+}
+
+
+
+/* ================================
+   GET LINK BUTTONS
+================================ */
+
+const buttons =
+    document.querySelectorAll(
+        ".offer-card button"
+    );
+
+
+buttons.forEach(
+    function(button, index) {
+
+        button.addEventListener(
+            "click",
+            async function() {
+
+
+                /* ================================
+                   GET LOGGED-IN USER
+                ================================= */
+
+                const supabaseUser =
+                    await getCurrentUser();
+
+
+                if (!supabaseUser) {
+                    return;
+                }
+
+
+
+                /* ================================
+                   USER NAME
+                ================================= */
+
+                const userName =
+                    supabaseUser
+                        .user_metadata?.name ||
+                    supabaseUser.email ||
+                    "User";
+
+
+
+                /* ================================
+                   REFERRAL ID
+                ================================= */
+
+                const referralId =
+                    "EV" +
+                    supabaseUser.id
+                        .replace(/-/g, "")
+                        .substring(0, 10)
+                        .toUpperCase();
+
+
+
+                /* ================================
+                   OFFER NAME
+                ================================= */
+
+                let offerName;
+
+
+                if (index === 0) {
+
+                    offerName =
+                        "Fashion Store";
+
+                }
+
+                else if (index === 1) {
+
+                    offerName =
+                        "Tech Products";
+
+                }
+
+                else {
+
+                    offerName =
+                        "Online Courses";
+
+                }
+
+
+
+                /* ================================
+                   CREATE LINK
+                ================================= */
+
+                const link =
+                    "https://earnova-demo.com/offer/" +
+                    (index + 1) +
+                    "?ref=" +
+                    referralId;
+
+
+
+                /* ================================
+                   COPY LINK
+                ================================= */
+
+                try {
+
+                    await navigator.clipboard
+                        .writeText(link);
+
+                }
+
+                catch (error) {
+
+                    console.log(
+                        "Clipboard error:",
+                        error
+                    );
+
+                }
+
+
+
+                /* ================================
+                   SAVE LAST LINK
+                ================================= */
+
+                localStorage.setItem(
+                    "earnovaLastLink",
+                    link
+                );
+
+
+
+                /* ================================
+                   SAVE GENERATED LINK
+                ================================= */
+
+                const linksKey =
+                    "earnovaLinks_" +
+                    supabaseUser.id;
+
+
+                let savedLinks =
+                    JSON.parse(
+                        localStorage.getItem(
+                            linksKey
+                        )
+                    ) || [];
+
+
+                savedLinks.push({
+
+                    link: link,
+
+                    offer: offerName,
+
+                    createdAt:
+                        new Date().toISOString()
+
+                });
+
+
+                localStorage.setItem(
+                    linksKey,
+                    JSON.stringify(
+                        savedLinks
+                    )
+                );
+
+
+
+                /* ================================
+                   CREATE UNIQUE CLICK ID
+                ================================= */
+
+                const clickId =
+                    crypto.randomUUID();
+
+
+
+                /* ================================
+                   SAVE EARNING TO SUPABASE
+                ================================= */
+
+                const {
+                    error: earningError
+                } = await supabaseClient
+                    .from("earnings")
+                    .insert({
+
+                        user_id:
+                            supabaseUser.id,
+
+                        offer_name:
+                            offerName,
+
+                        amount:
+                            5,
+
+                        click_id:
+                            clickId
+
+                    });
+
+
+
+                /* ================================
+                   CHECK DATABASE ERROR
+                ================================= */
+
+                if (earningError) {
+
+                    console.error(
+                        "Earning save error:",
+                        earningError
+                    );
+
+
+                    alert(
+                        "Earning save nahi hui.\n\n" +
+                        earningError.message
+                    );
+
+
+                    return;
+
+                }
+
+
+
+                /* ================================
+                   DATABASE SUCCESS
+                ================================= */
+
+                console.log(
+                    "Earning successfully saved."
+                );
+
+
+
+                /* ================================
+                   LOCAL USER STATS
+                ================================= */
+
+                const userStatsKey =
+                    "earnovaUserStats_" +
+                    supabaseUser.id;
+
+
+                let userStats =
+                    JSON.parse(
+                        localStorage.getItem(
+                            userStatsKey
+                        )
+                    ) || {
+
+                        fashionClicks: 0,
+
+                        techClicks: 0,
+
+                        courseClicks: 0,
+
+                        earnings: 0
+
+                    };
+
+
+
+                if (index === 0) {
+
+                    userStats.fashionClicks++;
+
+                }
+
+                else if (index === 1) {
+
+                    userStats.techClicks++;
+
+                }
+
+                else {
+
+                    userStats.courseClicks++;
+
+                }
+
+
+
+                userStats.earnings += 5;
+
+
+
+                localStorage.setItem(
+                    userStatsKey,
+                    JSON.stringify(
+                        userStats
+                    )
+                );
+
+
+
+                /* ================================
+                   UPDATE LOCAL USER
+                ================================= */
+
+                const users =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "earnovaUsers"
+                        )
+                    ) || [];
+
+
+                const userIndex =
+                    users.findIndex(
+                        function(item) {
+
+                            return (
+                                item.email &&
+                                supabaseUser.email &&
+                                item.email.toLowerCase() ===
+                                supabaseUser.email.toLowerCase()
+                            );
+
+                        }
+                    );
+
+
+                if (userIndex !== -1) {
+
+                    users[userIndex].name =
+                        userName;
+
+                    users[userIndex].referralId =
+                        referralId;
+
+
+                    localStorage.setItem(
+                        "earnovaUsers",
+                        JSON.stringify(users)
+                    );
+
+                }
+
+
+
+                /* ================================
+                   UPDATE LOGGED-IN USER
+                ================================= */
+
+                const currentUser = {
+
+                    name:
+                        userName,
+
+                    email:
+                        supabaseUser.email,
+
+                    referralId:
+                        referralId,
+
+                    blocked:
+                        false
+
+                };
+
+
+                localStorage.setItem(
+                    "earnovaLoggedInUser",
+                    JSON.stringify(
+                        currentUser
+                    )
+                );
+
+
+
+                /* ================================
+                   SUCCESS
+                ================================= */
+
+                alert(
+
+                    "Affiliate link copied!\n\n" +
+                    link +
+                    "\n\n" +
+                    "Earning added: ₹5"
+
+                );
+
+            }
+
+        );
+
+    }
+
+);
+
+
+
+/* ================================
+   FASHION SETTINGS
+================================ */
+
+const savedFashionOffer =
+    localStorage.getItem(
+        "earnovaOffer_Fashion Store"
+    );
+
+
+if (savedFashionOffer) {
+
+    const fashionData =
+        JSON.parse(
+            savedFashionOffer
+        );
+
+
+    document.getElementById(
+        "fashionCommission"
+    ).textContent =
+        fashionData.commission;
+
+
+    document.getElementById(
+        "fashionDescription"
+    ).textContent =
+        fashionData.description;
+
+}
+
+
+
+/* ================================
+   TECH SETTINGS
+================================ */
+
+const savedTechOffer =
+    localStorage.getItem(
+        "earnovaOffer_Tech Products"
+    );
+
+
+if (savedTechOffer) {
+
+    const techData =
+        JSON.parse(
+            savedTechOffer
+        );
+
+
+    document.getElementById(
+        "techCommission"
+    ).textContent =
+        techData.commission;
+
+}
+
+
+
+/* ================================
+   COURSE SETTINGS
+================================ */
+
+const savedCourseOffer =
+    localStorage.getItem(
+        "earnovaOffer_Online Courses"
+    );
+
+
+if (savedCourseOffer) {
+
+    const courseData =
+        JSON.parse(
+            savedCourseOffer
+        );
+
+
+    document.getElementById(
+        "courseCommission"
+    ).textContent =
+        courseData.commission;
+
+}
+
+
+</script>
+
+</body>
+
+</html>

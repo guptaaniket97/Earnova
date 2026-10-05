@@ -1,0 +1,407 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: #172033;
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(37, 99, 235, 0.10),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(14, 165, 233, 0.10),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #f8faff 0%,
+            #eef4ff 50%,
+            #f8fafc 100%
+        );
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.offers-header {
+    min-height: 76px;
+    padding: 0 6%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a,
+            #172554,
+            #1d4ed8
+        );
+
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, 0.18);
+}
+
+/* =========================
+   EARNOVA LOGO
+========================= */
+
+.offers-header .logo {
+    width: 52px;
+    height: 52px;
+
+    background-image: url("Earnova img.jpeg");
+    background-size: cover;
+    background-position: center;
+
+    border-radius: 50%;
+
+    font-size: 0;
+
+    flex-shrink: 0;
+
+    box-shadow:
+        0 0 0 3px rgba(255,255,255,0.15),
+        0 5px 18px rgba(0,0,0,0.25);
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+.offers-header nav {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.offers-header nav a {
+    text-decoration: none;
+
+    color: #e5e7eb;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.offers-header nav a:hover {
+    color: white;
+
+    transform: translateY(-1px);
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.offers-main {
+    max-width: 1200px;
+    margin: auto;
+
+    padding: 60px 30px 80px;
+
+    position: relative;
+}
+
+/* =========================
+   PAGE TITLE
+========================= */
+
+.offers-main h1 {
+    text-align: center;
+
+    font-size: 40px;
+    font-weight: 700;
+
+    margin-bottom: 12px;
+
+    color: #172033;
+}
+
+.subtitle {
+    text-align: center;
+
+    color: #687080;
+
+    font-size: 16px;
+
+    line-height: 1.6;
+
+    margin-bottom: 48px;
+}
+
+/* =========================
+   OFFER CARDS
+========================= */
+
+.offers-container {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 26px;
+}
+
+.offer-card {
+    background:
+        rgba(255, 255, 255, 0.90);
+
+    padding: 32px 28px;
+
+    border-radius: 20px;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.8);
+
+    box-shadow:
+        0 10px 35px
+        rgba(30, 64, 175, 0.08);
+
+    backdrop-filter: blur(10px);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.offer-card:hover {
+    transform: translateY(-8px);
+
+    box-shadow:
+        0 18px 40px
+        rgba(30, 64, 175, 0.14);
+}
+
+/* =========================
+   OFFER ICON
+========================= */
+
+.offer-icon {
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef3ff,
+            #dbeafe
+        );
+
+    border-radius: 18px;
+
+    font-size: 35px;
+
+    margin-bottom: 22px;
+
+    box-shadow:
+        0 6px 15px
+        rgba(37, 99, 235, 0.08);
+}
+
+/* =========================
+   OFFER TITLE
+========================= */
+
+.offer-card h2 {
+    font-size: 22px;
+
+    margin-bottom: 13px;
+
+    color: #172033;
+}
+
+/* =========================
+   DESCRIPTION
+========================= */
+
+.offer-card p {
+    color: #687080;
+
+    line-height: 1.7;
+
+    font-size: 14px;
+
+    min-height: 78px;
+}
+
+/* =========================
+   COMMISSION
+========================= */
+
+.commission {
+    margin-top: 22px;
+    margin-bottom: 20px;
+
+    padding: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f0fdf4,
+            #ecfdf5
+        );
+
+    border: 1px solid #dcfce7;
+
+    border-radius: 10px;
+
+    color: #166534;
+
+    font-size: 14px;
+}
+
+.commission strong {
+    font-size: 18px;
+
+    margin-left: 4px;
+}
+
+/* =========================
+   GET LINK BUTTON
+========================= */
+
+.offer-card button {
+    width: 100%;
+
+    padding: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #172033,
+            #1e3a8a
+        );
+
+    color: white;
+
+    border: none;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    transition: 0.2s ease;
+
+    box-shadow:
+        0 6px 15px
+        rgba(23, 32, 51, 0.15);
+}
+
+.offer-card button:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(37, 99, 235, 0.25);
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 950px) {
+
+    .offers-header {
+        padding: 0 30px;
+    }
+
+    .offers-header nav {
+        gap: 14px;
+    }
+
+    .offers-container {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+    .offers-header {
+        min-height: 70px;
+
+        padding: 12px 20px;
+
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+    .offers-header nav {
+        flex-wrap: wrap;
+
+        justify-content: center;
+
+        gap: 10px 16px;
+    }
+
+    .offers-header nav a {
+        font-size: 12px;
+    }
+
+    .offers-main {
+        padding: 40px 18px 60px;
+    }
+
+    .offers-main h1 {
+        font-size: 30px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+
+        margin-bottom: 32px;
+    }
+
+    .offers-container {
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+    }
+
+    .offer-card {
+        padding: 28px 22px;
+    }
+
+    .offer-card p {
+        min-height: auto;
+    }
+}

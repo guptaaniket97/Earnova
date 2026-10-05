@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Earnova - Withdraw</title>
+
+    <link rel="stylesheet" href="withdraw.css">
+</head>
+
+<body>
+
+    <header class="withdraw-header">
+
+        <div class="logo">Earnova</div>
+
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="offers.html">Offers</a>
+            <a href="my-links.html">My Links</a>
+            <a href="earnings.html">Earnings</a>
+            <a href="withdraw.html">Withdraw</a>
+            <a href="profile.html">Profile</a>
+        </nav>
+
+    </header>
+
+
+    <main class="withdraw-main">
+
+        <h1>Withdraw Earnings</h1>
+
+        <p class="subtitle">
+            Request a withdrawal from your available Earnova balance.
+        </p>
+
+
+        <div class="balance-card">
+
+            <p>Available Balance</p>
+
+            <h2>₹0.00</h2>
+
+            <small>Minimum withdrawal: ₹100</small>
+
+        </div>
+
+
+        <div class="withdraw-box">
+
+            <h2>Withdrawal Request</h2>
+
+            <label>Withdrawal Amount</label>
+
+            <input
+                type="number"
+                id="amount"
+                placeholder="Enter amount"
+                min="100"
+            >
+
+
+            <label>Payment Method</label>
+
+            <select id="paymentMethod">
+
+                <option value="">Select Payment Method</option>
+
+                <option value="upi">UPI</option>
+
+                <option value="bank">Bank Transfer</option>
+
+            </select>
+
+
+            <label>UPI ID / Bank Details</label>
+
+            <input
+                type="text"
+                id="paymentDetails"
+                placeholder="Enter payment details"
+            >
+
+
+            <button id="withdrawBtn">
+                Request Withdrawal
+            </button>
+
+            <p class="note">
+                Withdrawal requests are subject to verification and approval.
+            </p>
+
+        </div>
+
+
+        <div class="history">
+
+            <h2>Withdrawal History</h2>
+
+            <div class="history-row">
+
+                <div>
+                    <strong>No withdrawal requests</strong>
+
+                    <p>
+                        Your withdrawal history will appear here.
+                    </p>
+                </div>
+
+                <span>₹0.00</span>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        document.getElementById("withdrawBtn").onclick = function () {
+
+            const amount = document.getElementById("amount").value;
+            const method = document.getElementById("paymentMethod").value;
+            const details = document.getElementById("paymentDetails").value;
+
+
+            if (!amount || !method || !details) {
+
+                alert("Please fill all withdrawal details.");
+
+                return;
+            }
+
+
+            if (Number(amount) < 100) {
+
+                alert("Minimum withdrawal amount is ₹100.");
+
+                return;
+            }
+
+
+            alert("Withdrawal request submitted successfully!");
+
+        };
+
+    </script>
+
+</body>
+
+</html>

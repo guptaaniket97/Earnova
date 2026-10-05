@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Earnova Admin Panel</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f7fb;
+    color:#172033;
+}
+
+header{
+    min-height:76px;
+    padding:0 6%;
+
+    background:
+    linear-gradient(
+        135deg,
+        #0f172a,
+        #172554,
+        #1d4ed8
+    );
+
+    color:white;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.admin-brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.admin-logo{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    overflow:hidden;
+}
+
+.admin-logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+header h2{
+    font-size:22px;
+}
+
+.admin-label{
+    color:#bfdbfe;
+    font-size:12px;
+    margin-top:3px;
+}
+
+button{
+    border:none;
+    padding:11px 16px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.logout{
+    background:#ef4444;
+    color:white;
+}
+
+.container{
+    width:92%;
+    max-width:1200px;
+    margin:35px auto 70px;
+}
+
+.page-intro{
+    margin-bottom:28px;
+}
+
+.page-intro h1{
+    font-size:32px;
+    margin-bottom:8px;
+}
+
+.page-intro p{
+    color:#687080;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:
+    repeat(3,1fr);
+    gap:22px;
+}
+
+.stat{
+    background:white;
+    padding:26px;
+    border-radius:18px;
+    border:1px solid #e5e7eb;
+    box-shadow:
+    0 10px 30px
+    rgba(30,64,175,.08);
+}
+
+.stat h3{
+    color:#687080;
+    font-size:14px;
+    margin-bottom:12px;
+}
+
+.stat p{
+    font-size:32px;
+    font-weight:800;
+}
+
+.section{
+    background:white;
+    margin-top:28px;
+    padding:28px;
+    border-radius:18px;
+    border:1px solid #e5e7eb;
+    box-shadow:
+    0 10px 30px
+    rgba(30,64,175,.08);
+}
+
+.section h2{
+    font-size:22px;
+    margin-bottom:18px;
+}
+
+.section-description{
+    color:#687080;
+    font-size:13px;
+    margin-top:-12px;
+    margin-bottom:20px;
+}
+
+.search{
+    width:100%;
+    max-width:450px;
+    padding:14px 16px;
+    border:1px solid #dbe2ea;
+    border-radius:10px;
+    background:#f8fafc;
+    font-size:14px;
+    outline:none;
+    margin-bottom:20px;
+}
+
+.search:focus{
+    border-color:#2563eb;
+    background:white;
+}
+
+.user-card{
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+    padding:22px;
+    border-radius:14px;
+    margin-bottom:15px;
+}
+
+.user-card p{
+    margin:8px 0;
+    color:#475569;
+    font-size:14px;
+}
+
+.user-card b{
+    color:#172033;
+}
+
+.actions{
+    margin-top:16px;
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap;
+}
+
+.view{
+    background:#2563eb;
+    color:white;
+}
+
+.block{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.unblock{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.approve{
+    background:#16a34a;
+    color:white;
+}
+
+.reject{
+    background:#ef4444;
+    color:white;
+}
+
+.status{
+    font-weight:bold;
+}
+
+.small{
+    color:#687080;
+    font-size:12px!important;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.65);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:9999;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:520px;
+    padding:30px;
+    border-radius:18px;
+}
+
+.close{
+    background:#172033;
+    color:white;
+    margin-top:20px;
+    width:100%;
+}
+
+@media(max-width:900px){
+
+    .stats{
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:650px){
+
+    header{
+        padding:12px 20px;
+    }
+
+    header h2{
+        font-size:18px;
+    }
+
+    .admin-logo{
+        width:42px;
+        height:42px;
+    }
+
+    .container{
+        width:92%;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .stat{
+        padding:22px;
+    }
+
+    .section{
+        padding:20px;
+    }
+
+    .actions{
+        flex-direction:column;
+    }
+
+    .actions button{
+        width:100%;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="admin-brand">
+
+<div class="admin-logo">
+
+<img
+src="Earnova img.jpeg"
+alt="Earnova Logo">
+
+</div>
+
+<div>
+
+<h2>Earnova Admin</h2>
+
+<p class="admin-label">
+Administration Panel
+</p>
+
+</div>
+
+</div>
+
+<button
+class="logout"
+onclick="adminLogout()">
+
+Logout
+
+</button>
+
+</header>
+
+<div class="container">
+
+<div class="page-intro">
+
+<h1>
+Admin Dashboard
+</h1>
+
+<p>
+Manage users, earnings and withdrawal requests.
+</p>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+
+<h3>
+Total Users
+</h3>
+
+<p id="totalUsers">
+0
+</p>
+
+</div>
+
+<div class="stat">
+
+<h3>
+Total Earnings
+</h3>
+
+<p id="totalEarnings">
+₹0
+</p>
+
+</div>
+
+<div class="stat">
+
+<h3>
+Total Withdrawals
+</h3>
+
+<p id="totalWithdrawals">
+₹0
+</p>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>
+Registered Users
+</h2>
+
+<p class="section-description">
+View and manage Earnova users.
+</p>
+
+<input
+class="search"
+id="userSearch"
+type="text"
+placeholder="Search name or email..."
+oninput="searchUsers()">
+
+<div id="usersContainer">
+Loading users...
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>
+Withdrawal Requests
+</h2>
+
+<p class="section-description">
+Review and manage withdrawal requests.
+</p>
+
+<div id="withdrawalsContainer">
+Loading withdrawals...
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>
+Earnings Overview
+</h2>
+
+<p class="section-description">
+Latest earning activity across users.
+</p>
+
+<div id="earningsContainer">
+Loading earnings...
+</div>
+
+</div>
+
+</div>
+
+<div
+class="modal"
+id="userModal">
+
+<div class="modal-box">
+
+<h2>
+User Details
+</h2>
+
+<div
+id="userDetails"
+style="margin-top:15px;">
+</div>
+
+<button
+class="close"
+onclick="closeUserModal()">
+
+Close
+
+</button>
+
+</div>
+
+</div>
+<script>
+
+let databaseUsers = [];
+let databaseWithdrawals = [];
+let databaseEarnings = [];
+
+
+async function checkAdminAccess(){
+
+    const result =
+        await supabaseClient.auth.getUser();
+
+    const user = result.data.user;
+
+    if(!user){
+
+        alert("Please login first.");
+
+        window.location.href =
+            "index.html";
+
+        return false;
+    }
+
+
+    const adminResult =
+        await supabaseClient
+        .from("admin_users")
+        .select("user_id,email")
+        .eq("user_id",user.id)
+        .maybeSingle();
+
+
+    if(adminResult.error){
+
+        console.error(
+            adminResult.error
+        );
+
+        alert(
+            "Admin verification failed."
+        );
+
+        return false;
+    }
+
+
+    if(!adminResult.data){
+
+        alert(
+            "Access denied. Admin only."
+        );
+
+        window.location.href =
+            "dashboard.html";
+
+        return false;
+    }
+
+
+    console.log(
+        "Admin verified:",
+        user.email
+    );
+
+    return true;
+}
+
+
+
+async function loadUsers(){
+
+    const result =
+        await supabaseClient
+        .from("users")
+        .select(
+            "id,auth_id,name,email,referral_id,blocked,created_at"
+        )
+        .order(
+            "id",
+            {ascending:false}
+        );
+
+
+    if(result.error){
+
+        console.error(
+            result.error
+        );
+
+        document.getElementById(
+            "usersContainer"
+        ).innerHTML =
+            "<p>Unable to load users.</p>";
+
+        return;
+    }
+
+
+    databaseUsers =
+        result.data;
+
+    renderUsers();
+
+    updateStats();
+}
+
+
+
+function renderUsers(){
+
+    const box =
+        document.getElementById(
+            "usersContainer"
+        );
+
+
+    if(databaseUsers.length === 0){
+
+        box.innerHTML =
+            "<p>No users found.</p>";
+
+        return;
+    }
+
+
+    box.innerHTML = "";
+
+
+    databaseUsers.forEach(
+        function(user){
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "user-card";
+
+
+            const status =
+                user.blocked
+                ? "Blocked"
+                : "Active";
+
+
+            const buttonClass =
+                user.blocked
+                ? "unblock"
+                : "block";
+
+
+            const buttonText =
+                user.blocked
+                ? "Unblock"
+                : "Block";
+
+
+            card.innerHTML = `
+
+                <p>
+                    <b>Name:</b>
+                    ${escapeHtml(
+                        user.name || "User"
+                    )}
+                </p>
+
+                <p>
+                    <b>Email:</b>
+                    ${escapeHtml(
+                        user.email || "-"
+                    )}
+                </p>
+
+                <p>
+                    <b>Referral ID:</b>
+                    ${escapeHtml(
+                        user.referral_id || "-"
+                    )}
+                </p>
+
+                <p>
+                    <b>Status:</b>
+
+                    <span class="status">
+                        ${status}
+                    </span>
+                </p>
+
+                <p class="small">
+
+                    Joined:
+
+                    ${
+                        user.created_at
+                        ? new Date(
+                            user.created_at
+                        ).toLocaleString()
+                        : "-"
+                    }
+
+                </p>
+
+
+                <div class="actions">
+
+                    <button
+                        class="view"
+                        onclick="viewUser('${user.auth_id}')">
+
+                        View Details
+
+                    </button>
+
+
+                    <button
+                        class="${buttonClass}"
+                        onclick="toggleBlock(
+                            '${user.auth_id}',
+                            ${user.blocked}
+                        )">
+
+                        ${buttonText}
+
+                    </button>
+
+                </div>
+
+            `;
+
+
+            box.appendChild(card);
+
+        }
+    );
+}
+
+
+
+function searchUsers(){
+
+    const value =
+        document.getElementById(
+            "userSearch"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    const cards =
+        document.querySelectorAll(
+            ".user-card"
+        );
+
+
+    cards.forEach(
+        function(card){
+
+            const text =
+                card.innerText
+                .toLowerCase();
+
+
+            card.style.display =
+                text.includes(value)
+                ? ""
+                : "none";
+
+        }
+    );
+}
+
+
+
+async function toggleBlock(
+    authId,
+    currentStatus
+){
+
+    const newStatus =
+        !currentStatus;
+
+
+    const result =
+        await supabaseClient
+        .from("users")
+        .update({
+            blocked: newStatus
+        })
+        .eq(
+            "auth_id",
+            authId
+        );
+
+
+    if(result.error){
+
+        console.error(
+            result.error
+        );
+
+        alert(
+            "Unable to update user."
+        );
+
+        return;
+    }
+
+
+    alert(
+        newStatus
+        ? "User blocked."
+        : "User unblocked."
+    );
+
+
+    await loadUsers();
+
+}
+
+
+
+async function viewUser(authId){
+
+    const user =
+        databaseUsers.find(
+            function(item){
+
+                return item.auth_id ===
+                    authId;
+
+            }
+        );
+
+
+    if(!user){
+
+        return;
+    }
+
+
+    const result =
+        await supabaseClient
+        .from("earnings")
+        .select(
+            "amount,offer_name,created_at"
+        )
+        .eq(
+            "user_id",
+            authId
+        )
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    let earnings = 0;
+
+
+    if(
+        !result.error &&
+        result.data
+    ){
+
+        result.data.forEach(
+            function(item){
+
+                earnings +=
+                    Number(
+                        item.amount || 0
+                    );
+
+            }
+        );
+
+    }
+
+
+    document.getElementById(
+        "userDetails"
+    ).innerHTML = `
+
+        <p>
+            <b>Name:</b>
+            ${escapeHtml(
+                user.name || "User"
+            )}
+        </p>
+
+        <p>
+            <b>Email:</b>
+            ${escapeHtml(
+                user.email || "-"
+            )}
+        </p>
+
+        <p>
+            <b>Referral ID:</b>
+            ${escapeHtml(
+                user.referral_id || "-"
+            )}
+        </p>
+
+        <p>
+            <b>Status:</b>
+            ${
+                user.blocked
+                ? "Blocked"
+                : "Active"
+            }
+        </p>
+
+        <p>
+            <b>Total Earnings:</b>
+            ₹${earnings}
+        </p>
+
+        <p>
+            <b>Joined:</b>
+            ${
+                user.created_at
+                ? new Date(
+                    user.created_at
+                ).toLocaleString()
+                : "-"
+            }
+        </p>
+
+    `;
+
+
+    document.getElementById(
+        "userModal"
+    ).style.display = "flex";
+
+}
+
+
+
+function closeUserModal(){
+
+    document.getElementById(
+        "userModal"
+    ).style.display = "none";
+
+}
+async function loadWithdrawals(){
+
+    const result =
+        await supabaseClient
+        .from("withdrawals")
+        .select(
+            "id,created_at,user_id,amount,method,payment_details,status,admin_note"
+        )
+        .order(
+            "created_at",
+            { ascending:false }
+        );
+
+    if(result.error){
+
+        console.error(result.error);
+
+        document.getElementById(
+            "withdrawalsContainer"
+        ).innerHTML =
+            "<p>Unable to load withdrawals.</p>";
+
+        return;
+    }
+
+    databaseWithdrawals =
+        result.data;
+
+    renderWithdrawals();
+
+    updateStats();
+}
+
+
+function renderWithdrawals(){
+
+    const box =
+        document.getElementById(
+            "withdrawalsContainer"
+        );
+
+    if(databaseWithdrawals.length === 0){
+
+        box.innerHTML =
+            "<p>No withdrawal requests.</p>";
+
+        return;
+    }
+
+    box.innerHTML = "";
+
+    databaseWithdrawals.forEach(
+        function(request){
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "user-card";
+
+            const status =
+                request.status || "Pending";
+
+            const user =
+                databaseUsers.find(
+                    function(item){
+
+                        return item.auth_id ===
+                            request.user_id;
+
+                    }
+                );
+
+            const userName =
+                user ? user.name : "User";
+
+            const userEmail =
+                user ? user.email : "-";
+
+
+            div.innerHTML = `
+
+                <p>
+                    <b>Name:</b>
+                    ${escapeHtml(userName)}
+                </p>
+
+                <p>
+                    <b>Email:</b>
+                    ${escapeHtml(userEmail)}
+                </p>
+
+                <p>
+                    <b>Amount:</b>
+                    ₹${Number(
+                        request.amount || 0
+                    )}
+                </p>
+
+                <p>
+                    <b>Method:</b>
+                    ${escapeHtml(
+                        request.method || "-"
+                    )}
+                </p>
+
+                <p>
+                    <b>Payment Details:</b>
+                    ${escapeHtml(
+                        request.payment_details || "-"
+                    )}
+                </p>
+
+                <p>
+                    <b>Status:</b>
+
+                    <span class="status">
+                        ${escapeHtml(status)}
+                    </span>
+                </p>
+
+                <p class="small">
+                    ${
+                        request.created_at
+                        ? new Date(
+                            request.created_at
+                        ).toLocaleString()
+                        : "-"
+                    }
+                </p>
+
+                ${
+                    status.toLowerCase() === "pending"
+                    ? `
+                        <div class="actions">
+
+                            <button
+                                class="approve"
+                                onclick="
+                                    updateWithdrawal(
+                                        ${request.id},
+                                        'Approved'
+                                    )
+                                ">
+
+                                Approve
+
+                            </button>
+
+                            <button
+                                class="reject"
+                                onclick="
+                                    updateWithdrawal(
+                                        ${request.id},
+                                        'Rejected'
+                                    )
+                                ">
+
+                                Reject
+
+                            </button>
+
+                        </div>
+                    `
+                    : ""
+                }
+
+            `;
+
+            box.appendChild(div);
+
+        }
+    );
+}
+
+
+async function updateWithdrawal(
+    withdrawalId,
+    newStatus
+){
+
+    let adminNote = "";
+
+    if(newStatus === "Rejected"){
+
+        adminNote =
+            prompt(
+                "Reason for rejection (optional):"
+            ) || "";
+
+    }
+
+    const result =
+        await supabaseClient
+        .from("withdrawals")
+        .update({
+
+            status:newStatus,
+
+            admin_note:adminNote
+
+        })
+        .eq(
+            "id",
+            withdrawalId
+        );
+
+    if(result.error){
+
+        console.error(result.error);
+
+        alert(
+            "Unable to update withdrawal."
+        );
+
+        return;
+    }
+
+    alert(
+        "Withdrawal " +
+        newStatus +
+        "."
+    );
+
+    await loadWithdrawals();
+}
+
+
+async function loadEarnings(){
+
+    const result =
+        await supabaseClient
+        .from("earnings")
+        .select(
+            "id,user_id,offer_name,amount,click_id,created_at"
+        )
+        .order(
+            "created_at",
+            { ascending:false }
+        );
+
+    if(result.error){
+
+        console.error(result.error);
+
+        document.getElementById(
+            "earningsContainer"
+        ).innerHTML =
+            "<p>Unable to load earnings.</p>";
+
+        return;
+    }
+
+    databaseEarnings =
+        result.data;
+
+    renderEarnings();
+
+    updateStats();
+}
+
+
+function renderEarnings(){
+
+    const box =
+        document.getElementById(
+            "earningsContainer"
+        );
+
+    if(databaseEarnings.length === 0){
+
+        box.innerHTML =
+            "<p>No earnings yet.</p>";
+
+        return;
+    }
+
+    box.innerHTML = "";
+
+    const latest =
+        databaseEarnings.slice(0,20);
+
+    latest.forEach(
+        function(item){
+
+            const user =
+                databaseUsers.find(
+                    function(user){
+
+                        return user.auth_id ===
+                            item.user_id;
+
+                    }
+                );
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "user-card";
+
+            const userName =
+                user ? user.name : "User";
+
+            const userEmail =
+                user ? user.email : "-";
+
+
+            div.innerHTML = `
+
+                <p>
+                    <b>User:</b>
+                    ${escapeHtml(userName)}
+                </p>
+
+                <p>
+                    <b>Email:</b>
+                    ${escapeHtml(userEmail)}
+                </p>
+
+                <p>
+                    <b>Offer:</b>
+                    ${escapeHtml(
+                        item.offer_name || "-"
+                    )}
+                </p>
+
+                <p>
+                    <b>Amount:</b>
+                    ₹${Number(
+                        item.amount || 0
+                    )}
+                </p>
+
+                <p>
+                    <b>Click ID:</b>
+                    ${escapeHtml(
+                        item.click_id || "-"
+                    )}
+                </p>
+
+                <p class="small">
+                    ${
+                        item.created_at
+                        ? new Date(
+                            item.created_at
+                        ).toLocaleString()
+                        : "-"
+                    }
+                </p>
+
+            `;
+
+            box.appendChild(div);
+
+        }
+    );
+}
+
+
+function updateStats(){
+
+    const totalUsers =
+        databaseUsers.length;
+
+    let totalEarnings = 0;
+
+    databaseEarnings.forEach(
+        function(item){
+
+            totalEarnings +=
+                Number(
+                    item.amount || 0
+                );
+
+        }
+    );
+
+    let totalWithdrawals = 0;
+
+    databaseWithdrawals.forEach(
+        function(item){
+
+            if(
+                String(
+                    item.status || ""
+                ).toLowerCase() ===
+                "approved"
+            ){
+
+                totalWithdrawals +=
+                    Number(
+                        item.amount || 0
+                    );
+
+            }
+
+        }
+    );
+
+
+    document.getElementById(
+        "totalUsers"
+    ).textContent =
+        totalUsers;
+
+    document.getElementById(
+        "totalEarnings"
+    ).textContent =
+        "₹" + totalEarnings;
+
+    document.getElementById(
+        "totalWithdrawals"
+    ).textContent =
+        "₹" + totalWithdrawals;
+}
+
+
+function escapeHtml(value){
+
+    return String(
+        value ?? ""
+    )
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+async function adminLogout(){
+
+    await supabaseClient
+        .auth
+        .signOut();
+
+    localStorage.removeItem(
+        "earnovaLoggedInUser"
+    );
+
+    window.location.href =
+        "index.html";
+}
+
+
+async function startAdminPanel(){
+
+    const allowed =
+        await checkAdminAccess();
+
+    if(!allowed){
+
+        return;
+    }
+
+    await loadUsers();
+
+    await loadWithdrawals();
+
+    await loadEarnings();
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        startAdminPanel();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
